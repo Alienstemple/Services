@@ -8,10 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.TimePicker.OnTimeChangedListener
 
-class TimerService : Service() {
-
-
-    lateinit var onTimeChangedListener: OnTimeChangedListener
+class TimerBackgroundService : Service() {
 
     private val myBinder = LocalTimeServiceBinder()
     private lateinit var countdownTimer: CountDownTimer
@@ -31,13 +28,11 @@ class TimerService : Service() {
         Log.d(TAG,
             "onStartCommand() called with: intent = $intent, flags = $flags, startId = $startId")
 
-        startCountDownTimer(TIME_COUNTDOWN, TIMER_PERIOD)
-
-//        if(intent.action == ACTION_CLOSE) {
-//            // stopSelf()
-//        } else {
-//             startCountDownTimer(TIME_COUNTDOWN, TIMER_PERIOD)
-//        }
+        if(intent.action == ACTION_CLOSE) {
+             stopSelf()
+        } else {
+             startCountDownTimer(TIME_COUNTDOWN, TIMER_PERIOD)
+        }
 
         return START_NOT_STICKY
     }
@@ -59,7 +54,7 @@ class TimerService : Service() {
     }
 
     inner class LocalTimeServiceBinder : Binder() {
-        fun getTimerService() = this@TimerService
+        fun getTimerService() = this@TimerBackgroundService
     }
 
     private fun startCountDownTimer(time: Long, period: Long) {
@@ -86,7 +81,6 @@ class TimerService : Service() {
     companion object {
         const val TAG = "TimerServTag"
         const val ACTION_CLOSE = "TIMER_ACTION_CLOSE"
-        // TODO откуда берем?
         const val TIME_COUNTDOWN = 1000 * 500L
         const val TIMER_PERIOD = 1000L
     }

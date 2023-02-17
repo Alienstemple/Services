@@ -5,19 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".BackgroundTimer">
 
     <Button
-        android:id="@+id/background_service_btn"
+        android:id="@+id/start_background_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Background service" />
+        android:text="Start background service" />
 
     <Button
-        android:id="@+id/foreground_service_btn"
+        android:id="@+id/stop_background_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Foreground service" />
-
+        android:text="Stop background service" />
 
 </LinearLayout>

@@ -12,10 +12,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Services"
         tools:targetApi="31">
+        <activity
+            android:name=".ForegroundTimer"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
         <service
-            android:name=".TimerService"
+            android:name=".TimerForegroundService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".BackgroundTimer"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <service
+            android:name=".TimerBackgroundService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
