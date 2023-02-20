@@ -19,5 +19,11 @@
         android:layout_height="wrap_content"
         android:text="Foreground service" />
 
+    <Button
+        android:id="@+id/battery_manager_notific_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Battery manager receiver notification" />
+
 
 </LinearLayout>

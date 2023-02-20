@@ -26,6 +26,11 @@ class MainActivity : AppCompatActivity() {
             intent = Intent(this, ForegroundTimer::class.java)
             startActivity(intent)
         }
+
+        mainBinding.batteryManagerNotificBtn.setOnClickListener {
+            intent = Intent(this, BatteryManagerNotificatoinActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     companion object {
