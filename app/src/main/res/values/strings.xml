@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Services</string>
+    <string name="notific_channel_name">Test notific channel name</string>
+    <string name="notific_channel_description">Test notific channel descr</string>
+    <string name="notific_text_title">Notific title</string>
+    <string name="notific_text_descr">Notific text</string>
 </resources>

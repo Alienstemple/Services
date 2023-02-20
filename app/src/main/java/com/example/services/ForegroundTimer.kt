@@ -19,18 +19,18 @@ class ForegroundTimer : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d(TAG, "onCreate() called with: savedInstanceState = $savedInstanceState")
+
         foregrBinding = ActivityForegroundTimerBinding.inflate(layoutInflater)
         setContentView(foregrBinding.root)
 
-        intent = Intent(this, BackgroundTimer::class.java)
-        startActivity(intent)
-
-//        foregrBinding..setOnClickListener {
-//            startTimer()
-//        }
-//        foregrBinding..setOnClickListener {
-//            stopTimer()
-//        }
+        foregrBinding.startForegroundBtn.setOnClickListener {
+            startTimer()
+        }
+        foregrBinding.stopForegroundBtn.setOnClickListener {
+            stopTimer()
+        }
     }
 
     private inner class TimerServiceConnection: ServiceConnection {
@@ -47,17 +47,17 @@ class ForegroundTimer : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        intent = Intent(this, TimerBackgroundService::class.java)
+        intent = Intent(this, TimerForegroundService::class.java)
         startService(intent)
     }
 
     private fun stopTimer() {
-        intent = Intent(this, TimerBackgroundService::class.java)
+        intent = Intent(this, TimerForegroundService::class.java)
         stopService(intent)
     }
 
     private fun bindService() {
-        intent = Intent(this, TimerBackgroundService::class.java)
+        intent = Intent(this, TimerForegroundService::class.java)
 //        val timerServiceConnection = ServiceConnection
 //        bindService(intent, timerServiceConnection, BIND_AUTO_CREATE)
     }
