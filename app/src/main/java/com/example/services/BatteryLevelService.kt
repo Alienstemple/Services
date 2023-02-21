@@ -1,30 +1,37 @@
 package com.example.services
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Intent
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 
-class TimerForegroundService : Service() {
+class BatteryLevelService : Service() {
+
+    private val binder = BatteryLevelServiceBinder()
 
     override fun onCreate() {
         super.onCreate()
         createChannel()
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(NOTIFIC_ID, createNotification(1000))
-        return START_NOT_STICKY
+    inner class BatteryLevelServiceBinder : Binder() {
+        fun getBatteryLevelService() = this@BatteryLevelService
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
+    override fun onBind(intent: Intent): IBinder {
+        Log.d(TAG, "onBind() called with: intent = $intent")
+        return binder
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForeground(TimerForegroundService.NOTIFIC_ID, createNotification(1000))
+
+        // start timer if not ACTION_STOP
+
+        return START_NOT_STICKY
     }
 
     private fun createNotification(currentTime: Int): Notification {
@@ -59,8 +66,8 @@ class TimerForegroundService : Service() {
     }
 
     companion object {
-        const val TAG = "TimerForegrServ"
-        const val NOTIFIC_ID = 1
-        const val CHANNEL_ID = "Test channel"
+        const val TAG = "BatterLevServLog"
+        const val NOTIFIC_ID = 101
+        const val CHANNEL_ID = "Battery channel"
     }
 }
