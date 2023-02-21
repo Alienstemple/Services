@@ -2,15 +2,19 @@ package com.example.services
 
 import android.app.*
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.provider.Telephony
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 
 class BatteryLevelService : Service() {
 
     private val binder = BatteryLevelServiceBinder()
+    private lateinit var receiver: BatteryLevelReceiver
 
     override fun onCreate() {
         super.onCreate()
@@ -27,9 +31,20 @@ class BatteryLevelService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(TimerForegroundService.NOTIFIC_ID, createNotification(1000))
+        startForeground(NOTIFIC_ID, createNotification(1000))
 
         // start timer if not ACTION_STOP
+
+        // Register receiver
+        Log.d(TAG, "Before registering receiver")
+        receiver = BatteryLevelReceiver(object : BatteryChangedListener {
+            override fun onBatteryLevelChanged(batteryPct: Int) {
+                Log.d(TAG, "UpdateNotification called. Battery = $batteryPct")
+                val notificationManager = NotificationManagerCompat.from(this@BatteryLevelService)
+                notificationManager.notify(NOTIFIC_ID, createNotification(batteryPct))
+            }
+        })
+        registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
 
         return START_NOT_STICKY
     }
@@ -63,6 +78,11 @@ class BatteryLevelService : Service() {
             val notificationManager: NotificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(notificationChannel)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 
     companion object {

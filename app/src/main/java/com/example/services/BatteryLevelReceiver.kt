@@ -6,15 +6,12 @@ import android.content.Intent
 import android.os.BatteryManager
 import android.util.Log
 
-class BatteryLevelReceiver: BroadcastReceiver() {
+class BatteryLevelReceiver(private val batteryChangedListener: BatteryChangedListener): BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
-        // TODO create and show notification
-
         val batteryPct = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+        Log.d(TAG, "onReceive() Battery level = $batteryPct")
 
-        Log.d(TAG, "onReceive() called with: context = $context, intent = $intent")
-
-
+        batteryChangedListener.onBatteryLevelChanged(batteryPct)
     }
 
     companion object {
