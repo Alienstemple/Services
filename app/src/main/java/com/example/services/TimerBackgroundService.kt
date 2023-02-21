@@ -37,11 +37,6 @@ class TimerBackgroundService : Service() {
         return START_NOT_STICKY
     }
 
-    override fun onUnbind(intent: Intent?): Boolean {
-        return super.onUnbind(intent)
-        Log.d(TAG, "onUnbind() called with: intent = $intent")
-    }
-
     override fun onRebind(intent: Intent?) {
         super.onRebind(intent)
         Log.d(TAG, "onRebind() called with: intent = $intent")
