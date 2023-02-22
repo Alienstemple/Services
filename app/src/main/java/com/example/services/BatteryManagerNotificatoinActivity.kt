@@ -1,12 +1,17 @@
 package com.example.services
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.services.databinding.ActivityBatteryManagerNotificatoinBinding
 
 class BatteryManagerNotificatoinActivity : AppCompatActivity() {
@@ -36,7 +41,7 @@ class BatteryManagerNotificatoinActivity : AppCompatActivity() {
 
         with(binding) {
             startBatteryServiceBtn.setOnClickListener {
-                startService()
+                checkNotificationPermission()
             }
 
             stopBatteryServiceBtn.setOnClickListener {
@@ -58,6 +63,48 @@ class BatteryManagerNotificatoinActivity : AppCompatActivity() {
 
     }
 
+    private fun checkNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Granted
+            Log.d(TAG, "Notification permission is already granted")
+            startService()
+        } else {
+            // Not granted
+            requestNotificationPermission()
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        Log.d(TAG, "In requestNotificPerm")
+        requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            NOTIF_PERM_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.d(TAG, "In onRequestPermissionResult")
+
+        if (requestCode == NOTIF_PERM_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            ) {
+                Log.d(TAG, "Notific permitted")
+                startService()
+            } else {
+                Log.d(TAG, "Notific permission is still DENIED")
+                Toast.makeText(this, "Notific permission is still DENIED", Toast.LENGTH_SHORT)
+                    .show()
+            }
+            return
+        }
+    }
+
     private fun startService() {
         val intent = Intent(this, BatteryLevelService::class.java)
         startService(intent)
@@ -69,7 +116,7 @@ class BatteryManagerNotificatoinActivity : AppCompatActivity() {
     }
 
     private fun bindBatteryService() {
-        val intent = Intent(this, BatteryLevelService.BatteryLevelServiceBinder::class.java)
+        val intent = Intent(this, BatteryLevelService::class.java)
         bindService(intent, batteryLevelServiceConnection, BIND_AUTO_CREATE)
         bound = true
     }
@@ -96,5 +143,6 @@ class BatteryManagerNotificatoinActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "BatterActivLog"
+        const val NOTIF_PERM_REQUEST_CODE = 101
     }
 }
