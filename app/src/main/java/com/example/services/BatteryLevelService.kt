@@ -37,15 +37,17 @@ class BatteryLevelService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        startForeground(NOTIFIC_ID, createNotification(100, 1000))
-
+        Log.d(TAG,
+            "onStartCommand() called with: intent action = ${intent.action}")
         if(intent.action == TimerBackgroundService.ACTION_CLOSE) {
             Log.d(TAG, "Action close, before stop self")
+            unregisterReceiver(receiver)
             stopSelf()
         } else {
             Log.d(TAG, "Before starting timer")
             startCountDownTimer(TimerBackgroundService.TIME_COUNTDOWN,
                 TimerBackgroundService.TIMER_PERIOD)
+            startForeground(NOTIFIC_ID, createNotification(100, 1000))
         }
 
         // Register receiver
@@ -69,8 +71,9 @@ class BatteryLevelService : Service() {
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE) // Android 12
 
         // PendingIntent для остановки таймера
-        val intentClose = Intent(ACTION_CLOSE)
-        val pendingIntentClose = PendingIntent.getActivity(this, 0, intentClose, PendingIntent.FLAG_IMMUTABLE) // Android 12
+        val intentClose = Intent(this, BatteryLevelService::class.java)
+        intentClose.action = ACTION_CLOSE
+        val pendingIntentClose = PendingIntent.getService(this, 0, intentClose, PendingIntent.FLAG_IMMUTABLE) // Android 12
 
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
         val currentDate = sdf.format(Date())
@@ -103,7 +106,6 @@ class BatteryLevelService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         stopCountdownTimer()
-        unregisterReceiver(receiver)
     }
 
     private fun startCountDownTimer(time: Long, period: Long) {
@@ -131,6 +133,7 @@ class BatteryLevelService : Service() {
     private fun stopCountdownTimer() {
         Log.d(TAG, "stopCountdownTimer() called")
         countdownTimer.cancel()
+        unregisterReceiver(receiver)
     }
 
     companion object {
